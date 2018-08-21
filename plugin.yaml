@@ -1,0 +1,7 @@
+
+name: outdated
+version: 0.0.1
+usage: List outdated subcharts
+description: |-
+  List outdated subcharts.
+command: "$HELM_PLUGIN_DIR/outdated.sh"

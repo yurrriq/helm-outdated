@@ -1,21 +1,32 @@
 * helm-outdated
 
+** Metadata
 #+BEGIN_SRC yaml :tangle plugin.yaml
 name: outdated
-version: 0.0.2
+version: 0.0.3
 usage: list outdated subcharts
 description: |-
-  List outdated subcharts.
+  A Helm plugin to list outdated subcharts
 command: "$HELM_PLUGIN_DIR/outdated.sh"
 #+END_SRC
 
+** Script
+   :PROPERTIES:
+   :header-args: :tangle outdated.sh
+   :END:
 
-#+BEGIN_SRC bash :shebang "#! /usr/bin/env nix-shell" :tangle outdated.sh
+Set the interpreter to Bash, and include the [[https://www.gnu.org/software/gawk/][GNU awk]], [[https://helm.sh/][Helm]], and [[https://yq.readthedocs.io/][yq]] packages.
+#+BEGIN_SRC bash :shebang "#! /usr/bin/env nix-shell"
 #! nix-shell --pure -i bash -p gawk kubernetes-helm yq
+#+END_SRC
 
+Be safer.
+#+BEGIN_SRC bash
 set -euo pipefail
+#+END_SRC
 
-
+Iterate through each dependency, and determine if it's outdated.
+#+BEGIN_SRC bash
 while IFS= read -r dependency
 do
     subchart="${dependency%-*}"

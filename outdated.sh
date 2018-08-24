@@ -3,7 +3,6 @@
 
 set -euo pipefail
 
-
 while IFS= read -r dependency
 do
     subchart="${dependency%-*}"

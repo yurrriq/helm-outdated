@@ -40,7 +40,9 @@ do
         printf "Consider upgrading %s: %s -> %s.\\n" \
                "$subchart" "$current" "$latest"
     fi
-done < <(helm dep list | tail -n+2 | head -n-1 | sort -u | \
+done < <(helm dep list | \
+             grep -v WARNING | \
+             tail -n+2 | head -n-1 | sort -u | \
              awk '{ sub("@","",$3); printf "%s/%s-%s\n", $3, $1, $2; }')
 #+END_SRC
 

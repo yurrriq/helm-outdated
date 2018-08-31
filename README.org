@@ -1,22 +1,11 @@
 * helm-outdated
-
-** Metadata
-#+BEGIN_SRC yaml :tangle plugin.yaml
-name: outdated
-version: 0.0.3
-usage: list outdated subcharts
-description: |-
-  A Helm plugin to list outdated subcharts
-command: "$HELM_PLUGIN_DIR/outdated.sh"
-#+END_SRC
-
 ** Script
    :PROPERTIES:
    :header-args: :tangle outdated.sh
    :END:
 
 Set the interpreter to Bash, and include the [[https://www.gnu.org/software/gawk/][GNU awk]], [[https://helm.sh/][Helm]], and [[https://yq.readthedocs.io/][yq]] packages.
-#+BEGIN_SRC bash :shebang "#! /usr/bin/env nix-shell"
+#+BEGIN_SRC bash :shebang "#! /usr/bin/env nix-shell" :padline no
 #! nix-shell --pure -i bash -p gawk kubernetes-helm yq
 #+END_SRC
 
@@ -45,7 +34,54 @@ done < <(helm dep list | \
              tail -n+2 | head -n-1 | sort -u | \
              awk '{ sub("@","",$3); printf "%s/%s-%s\n", $3, $1, $2; }')
 #+END_SRC
+** Metadata
+#+BEGIN_SRC yaml :tangle plugin.yaml :padline no
+name: outdated
+version: 0.0.3
+usage: list outdated subcharts
+description: |-
+  A Helm plugin to list outdated subcharts
+command: "$HELM_PLUGIN_DIR/outdated.sh"
+#+END_SRC
+** Installation
+   :PROPERTIES:
+   :header-args: :tangle Makefile :padline no
+   :END:
 
+
+The default target, =install=, is phony.
+#+BEGIN_SRC makefile
+.DEFAULT: install
+.PHONY: install
+#+END_SRC
+
+The =instal= target requires [[./README.org][README.org]].s
+#+BEGIN_SRC makefile
+install: README.org
+#+END_SRC
+
+#+BEGIN_SRC makefile
+	@ emacs --batch --quick \
+		--load ob-tangle \
+		--eval '(setq org-src-preserve-indentation t)' \
+		--eval '(org-babel-tangle-file "$<")'
+#+END_SRC
+
+#+BEGIN_SRC makefile
+	@ mkdir -p "$${HELM_HOME:-$$HOME/.helm}/plugins/outdated"
+#+END_SRC
+
+#+BEGIN_SRC makefile
+	@ stow -t "$${HELM_HOME:-$$HOME/.helm}/plugins/outdated" .
+#+END_SRC
+
+** Stow Ignore List
+#+BEGIN_SRC txt :tangle .stow-local-ignore :padline no
+\.DS_Store
+\.git
+Makefile
+README\.org
+#+END_SRC
 # Local Variables:
 # org-src-preserve-indentation: t
 # End:

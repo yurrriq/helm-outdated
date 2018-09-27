@@ -36,7 +36,7 @@ done < <(helm dep list \
 ** Metadata
 #+BEGIN_SRC yaml :tangle plugin.yaml :padline no
 name: outdated
-version: 0.0.4
+version: 0.0.5
 usage: list outdated subcharts
 description: |-
   A Helm plugin to list outdated subcharts

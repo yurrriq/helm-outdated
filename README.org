@@ -82,6 +82,3 @@ install: README.org
 Makefile
 README\.org
 #+END_SRC
-# Local Variables:
-# org-src-preserve-indentation: t
-# End:

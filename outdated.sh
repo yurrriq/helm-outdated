@@ -1,5 +1,4 @@
-#! /usr/bin/env nix-shell
-#! nix-shell --pure -i bash -p gawk kubernetes-helm yq
+#! /usr/bin/env bash
 
 set -euo pipefail
 

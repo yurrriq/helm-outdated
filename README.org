@@ -1,16 +1,17 @@
 * helm-outdated
+** Dependencies
+- [[https://helm.sh/][Helm]] (obviously)
+- (GNU) awk
+- [[https://yq.readthedocs.io/][yq]]
+- Optional (for ~make install~): [[https://www.gnu.org/software/stow/][GNU Stow]]
+
 ** Script
    :PROPERTIES:
    :header-args: :tangle outdated.sh
    :END:
 
-Set the interpreter to Bash, and include the [[https://www.gnu.org/software/gawk/][GNU awk]], [[https://helm.sh/][Helm]], and [[https://yq.readthedocs.io/][yq]] packages.
-#+BEGIN_SRC bash :shebang "#! /usr/bin/env nix-shell" :padline no
-#! nix-shell --pure -i bash -p gawk kubernetes-helm yq
-#+END_SRC
-
 Be safer.
-#+BEGIN_SRC bash
+#+BEGIN_SRC bash :shebang "#! /usr/bin/env bash"
 set -euo pipefail
 #+END_SRC
 
@@ -55,23 +56,15 @@ The default target, =install=, is phony.
 .PHONY: install
 #+END_SRC
 
-The =instal= target requires [[./README.org][README.org]].s
+The =install= target tangles [[./README.org][README.org]], creates the target directory if
+missing, and uses [[https://www.gnu.org/software/stow/][GNU Stow]] to install the plugin.
 #+BEGIN_SRC makefile
 install: README.org
-#+END_SRC
-
-#+BEGIN_SRC makefile
 	@ emacs --batch --quick \
 		--load ob-tangle \
 		--eval '(setq org-src-preserve-indentation t)' \
 		--eval '(org-babel-tangle-file "$<")'
-#+END_SRC
-
-#+BEGIN_SRC makefile
 	@ mkdir -p "$${HELM_HOME:-$$HOME/.helm}/plugins/outdated"
-#+END_SRC
-
-#+BEGIN_SRC makefile
 	@ stow -t "$${HELM_HOME:-$$HOME/.helm}/plugins/outdated" .
 #+END_SRC
 
